@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'auth/andriod_auth_provider.dart';
 import 'widgets/message_form.dart';
+import 'widgets/message_wall.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -31,6 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _signedIn = false;
+
   void _signin() async {
     try {
       final creds = await AuthProvider().signInWithGoogle();
@@ -40,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _signedIn = true;
       });
     } catch (e) {
-      print("Login Failed: $e");
+      print('Login Failed: $e');
     }
   }
 
@@ -73,12 +76,27 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Expanded(
-            child: Container(),
+            child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('chat_messages')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return MessageWall(
+                      messages: snapshot.data.docs,
+                    );
+                  }
+
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+                ),
           ),
           if (_signedIn)
             MessageForm(
               onSubmit: (value) {
-                print("==>" + value);
+                print('==>' + value);
               },
             )
           else

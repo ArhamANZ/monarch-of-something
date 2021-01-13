@@ -8,7 +8,7 @@ class _AndriodAuthProvider implements AuthProviderBase {
   @override
   Future<FirebaseApp> initialize() async {
     return await Firebase.initializeApp(
-      name: "Monarchs of Something",
+      name: 'Monarchs of Something',
       options: FirebaseOptions(
           apiKey: "AIzaSyD-mJFU_gDZ-UYDos7zmkYBwRl57ctGNlI",
           authDomain: "monarchs-of-something.firebaseapp.com",

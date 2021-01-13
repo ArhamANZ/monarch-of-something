@@ -11,13 +11,13 @@ class MessageForm extends StatefulWidget {
 
 class _MessageFormState extends State<MessageForm> {
   final _controller = TextEditingController();
+
   String _message;
 
   void _onPressed() {
     widget.onSubmit(_message);
-    _message = "";
+    _message = '';
     _controller.clear();
-    setState(() {});
   }
 
   @override
@@ -30,8 +30,9 @@ class _MessageFormState extends State<MessageForm> {
         children: [
           Expanded(
             child: TextField(
+              controller: _controller,
               decoration: InputDecoration(
-                hintText: "Type a Message",
+                hintText: 'Type a Message',
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -60,7 +61,7 @@ class _MessageFormState extends State<MessageForm> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text("SEND",
+              child: Text('SEND',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
