@@ -10,6 +10,10 @@ class ChatMessageOther extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 6
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -31,7 +35,13 @@ class ChatMessageOther extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Text('${data['author']} said:'),
+              Text('${data['author']} said:', style: TextStyle(
+                color: Colors.blueGrey,
+                fontStyle: FontStyle.italic,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),),
+              SizedBox(height: 5),
               Text(data['value']),
             ],
           ),
