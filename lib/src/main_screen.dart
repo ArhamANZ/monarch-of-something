@@ -26,6 +26,7 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
+  final store = FirebaseFirestore.instance.collection('chat_messages');
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -54,6 +55,23 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _addMessage(String value) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await widget.store.add({
+        'author': user.displayName ?? 'Anonymous',
+        'author_id': user.uid,
+        'photo_url': user.photoURL ?? 'https://placehold.it/100x100',
+        'timestamp': Timestamp.now().millisecondsSinceEpoch,
+        'value': value,
+      });
+    }
+  }
+
+  void _deleteMessage(String docId) async {
+    await widget.store.doc(docId).delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,27 +95,30 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('chat_messages')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return MessageWall(
-                      messages: snapshot.data.docs,
+              stream: widget.store.orderBy('timestamp').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data.docs.isEmpty) {
+                    return Center(
+                      child: Text('No Messages to diplay'),
                     );
                   }
 
-                  return Center(
-                    child: CircularProgressIndicator(),
+                  return MessageWall(
+                    messages: snapshot.data.docs,
+                    onDelete: _deleteMessage,
                   );
-                },
-                ),
+                }
+
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
           ),
           if (_signedIn)
             MessageForm(
-              onSubmit: (value) {
-                print('==>' + value);
-              },
+              onSubmit: _addMessage,
             )
           else
             Container(

@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 class ChatMessageOther extends StatelessWidget {
   final int index;
   final Map<String, dynamic> data;
+  final bool showAvatar; 
 
-  const ChatMessageOther({Key key, this.index, this.data}) : super(key: key);
+  const ChatMessageOther(
+    {Key key, this.index, this.data, this.showAvatar = true}) 
+    : super(key: key);
 
 
   @override
@@ -17,9 +20,12 @@ class ChatMessageOther extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-        CircleAvatar(
-          backgroundImage: NetworkImage(data['photo_url']),
-        ),
+        if (showAvatar)
+          CircleAvatar(
+            backgroundImage: NetworkImage(data['photo_url']),
+          )
+        else 
+          SizedBox(width: 40),
         SizedBox(width: 10),
         Container(
           constraints: BoxConstraints(
